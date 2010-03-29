@@ -16,24 +16,15 @@ namespace reversi
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Spieler an der Reihe
-        /// </summary>
-        int Spieler = 1;
+        Reversi game = new Reversi();
 
-        int[,] Feld;
-        bool gameOver = false;
         Color[] Farben = new Color[3] { SystemColors.Control, Color.Red, Color.Blue };
 
         int fieldw, fieldh = 10;
-
+        
         void NeuesSpiel()
         {
-            Feld = new int[6, 6];
-            Feld[2, 2] = 1;
-            Feld[3, 2] = 2;
-            Feld[2, 3] = 1;
-            Feld[3, 3] = 2;
+        	game.NeuesSpiel();
             SpielfeldAktualisieren();
         }
 
@@ -44,7 +35,7 @@ namespace reversi
             {
                 for (int x = 0; x < 6; x++)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(Farben[Feld[x, y]]),
+                    e.Graphics.FillRectangle(new SolidBrush(Farben[game.Feld[x, y]]),
                         boardPanel.ClientRectangle.Left + x * fieldw,
                         boardPanel.ClientRectangle.Top + y * fieldh,
                         fieldw, fieldh);
@@ -90,107 +81,27 @@ namespace reversi
         }
 
         /// <summary>
-        /// Wechselt den Spieler und überprüft, ob der einen Zug ausführen kann.
-        /// Kann er dies nicht, ist der ursprüngliche Spieler wieder dran.
-        /// Kann der auch nichts machen, wird das Spiel beendet, indem <see cref="BeendeSpiel"/> aufgerufen wird.
-        /// </summary>
-        void SpielerWechsel()
-        {
-            Spieler = ReversiLogik.AndererSpieler(Spieler);
-
-            // Ende?
-            if (!ReversiLogik.ZugMöglich(Feld, Spieler))
-            {
-                Spieler = ReversiLogik.AndererSpieler(Spieler);
-                if (!ReversiLogik.ZugMöglich(Feld, Spieler))
-                    // der andere kann auch nichts machen, Ende
-                    BeendeSpiel();
-                else
-                    // der Spieler muss passen
-                    MessageBox.Show(string.Format("Spieler {0} kann keinen gültigen Zug vornehmen!\nSpieler {1} ist dran.",
-                        Spieler, ReversiLogik.AndererSpieler(Spieler)));
-            }
-
-            // Anzeige aktualisieren
-            spielerDispPanel.Refresh();
-        }
-
-        /// <summary>
         /// Beendet das Spiel, indem <see cref="gameOver"/> auf true gesetzt wird.
         /// Eine MessageBox macht auf das Spielergebnis aufmerksam.
         /// </summary>
-        private void BeendeSpiel()
+        private void SpielBeendet()
         {
-            gameOver = true;
-            int[] statistik = FelderStatistik();
+            int[] statistik = ReversiLogik.Statistik(game.Feld);
             int winner = statistik[1] > statistik[2] ? 1 : statistik[2] > statistik[1] ? 2 : 0;
             MessageBox.Show("Spiel vorbei! " + (winner == 0 ? "Unentschieden" : string.Format("Spieler {0} gewinnt.", winner)), 
                 "Spielende");
         }
 
-        /// <summary>
-        /// Zählt die Felder aus.
-        /// </summary>
-        /// <returns>Ein int-Array mit folgenden Posten: { leere Felder, Felder von Spieler 1, Felder von Spieler 2 }</returns>
-        int[] FelderStatistik()
-        {
-            int[] counter = new int[3];
-            // Felder auszählen
-            for (int y = 0; y < 6; y++)
-                for (int x = 0; x < 6; x++)
-                    counter[Feld[x, y]]++;
-            return counter;
-        }
-
-        /// <summary>
-        /// Versucht einen Zug auf das angegebene Feld <paramref name="Ziel"/> vorzunehmen.
-        /// </summary>
-        /// <param name="Ziel">Ortsvektor zum Feld, auf das gezogen werden soll.</param>
-        void VersucheZug(Vektor Ziel)
-        {
-            if (ReversiLogik.ZugGültig(Feld, Ziel, Spieler))
-            {
-                List<Vektor> gewonneneFelder = ReversiLogik.GewonneneFelder(Feld, Ziel, Spieler);
-                // Ändere Felder
-                foreach (Vektor p in gewonneneFelder)
-                    Feld[p.X, p.Y] = Spieler;
-
-                int[] counter = FelderStatistik();
-                score1.Text = counter[1].ToString();
-                score2.Text = counter[2].ToString();
-
-                // neu zeichnen
-                SpielfeldAktualisieren();
-
-                SpielerWechsel();
-            }
-        }
+		private void StatistikAktualisieren()
+		{
+			int[] statistik = ReversiLogik.Statistik(game.Feld);
+			score1.Text = statistik[1].ToString();
+			score2.Text = statistik[2].ToString();
+		}
 
         private void SpielfeldAktualisieren()
         {
             boardPanel.Refresh();
-        }
-
-        private void boardPanel_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (!gameOver)
-            {
-                int x = e.X - boardPanel.ClientRectangle.Left;
-                int y = e.Y - boardPanel.ClientRectangle.Top;
-                Vektor Ziel = ToBoardCoordinates(e.X, e.Y);
-                if (Ziel.X < 6 && Ziel.Y < 6)
-                {
-                    VersucheZug(Ziel);
-                }
-            }
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            score1.BackColor = Farben[1];
-            score2.BackColor = Farben[2];
-            NeuesSpiel();
-            Spieler = new Random().Next(1, 3);
         }
 
         /// <summary>
@@ -206,6 +117,39 @@ namespace reversi
             return new Vektor(col, row);
         }
 
+        private void boardPanel_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (!game.GameOver)
+            {
+                Vektor Ziel = ToBoardCoordinates(e.X, e.Y);
+                if (Ziel.X < 6 && Ziel.Y < 6)
+                {
+					int spielerVorher = game.AktuellerSpieler;
+					if (game.Zug(Ziel))
+					{
+						// Zug erfolgreich
+						StatistikAktualisieren();
+						SpielfeldAktualisieren();
+						if (game.GameOver)
+							SpielBeendet();
+						else if (spielerVorher == game.AktuellerSpieler)
+							MessageBox.Show(string.Format("Spieler {0} kann keinen gültigen Zug vornehmen!\nSpieler {1} ist dran.", 
+							                              game.AktuellerSpieler, ReversiLogik.AndererSpieler(game.AktuellerSpieler)));
+						else
+							// Spielerfarbe aktualisieren
+							spielerDispPanel.Refresh();
+					}
+                }
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            score1.BackColor = Farben[1];
+            score2.BackColor = Farben[2];
+            NeuesSpiel();
+        }
+
         private void boardPanel_MouseMove(object sender, MouseEventArgs e)
         {
         }
@@ -213,7 +157,7 @@ namespace reversi
         private void spielerDispPanel_Paint(object sender, PaintEventArgs e)
         {
             // in der Spielerfarbe einfärben
-            e.Graphics.FillRectangle(new SolidBrush(Farben[Spieler]), e.ClipRectangle);
+            e.Graphics.FillRectangle(new SolidBrush(Farben[game.AktuellerSpieler]), e.ClipRectangle);
         }
 
         private void Form1_Shown(object sender, EventArgs e)

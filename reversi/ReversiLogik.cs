@@ -37,6 +37,17 @@ namespace reversi
         {
             return 3 - aktuellerSpieler;
         }
+		
+		public static int[] Statistik(int[,] feld)
+		{
+			int[] counter = new int[3];
+			
+            // Felder auszählen
+            for (int y = 0; y < 6; y++)
+                for (int x = 0; x < 6; x++)
+                    counter[feld[x, y]]++;
+            return counter;
+		}
 
         /// <summary>
         /// Gibt eine Liste von Richtungen zurück, in denen der Spieler an diesem Feld etwas gewinnen könnte.
@@ -111,8 +122,7 @@ namespace reversi
             List<Vektor> felder = new List<Vektor>();
 
             List<Vektor> richtungen = EffektiveRichtungen(Feld, Ziel, Spieler);
-            int andererSpieler = AndererSpieler(Spieler);
-
+			
             foreach (Vektor v in richtungen)
             {
                 // Sammle fremde Felder in der Richtung ein
