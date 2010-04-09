@@ -134,5 +134,87 @@ namespace reversi
             
             return felder;
         }
+
+
+      internal struct MinimaxTreeNode {
+	public Vektor GesetztesFeld;
+	public int Ergebnis;
+	public MinimaxTreeNode[] children;
+
+	public MinimaxTreeNode(Vektor ziel, int ergebnis, MinimaxTreeNode[] children) {
+	  this.GesetztesFeld = ziel;
+	  this.Ergebnis = ergebnis;
+	  this.children = children;
+	}
+      }						    
+		    
+      internal static MinimaxTreeNode Minimax(int[,] feld, Vektor ziel, int spieler, int amZug, bool letzterÜbersprungen)
+      {
+	Vektor dx = new Vektor(1, 0);
+	Vektor dy = new Vektor(0, 1);
+
+	List<Vektor> ziele = new List<Vektor>();
+	#region Suche mögliche Felder zum Setzen zusammen
+	for (Vektor xv = new Vektor(0, 0); xv.X < 6; xv += dx) {
+	  for (Vektor yv = new Vektor(0, 0); yv.Y < 6; yv += dy) {
+	    if (feld[xv.X, yv.Y] == LeeresFeld)
+	      if (EffektiveRichtungen(feld, xv + yv, amZug).Count > 0)
+		ziele.Add(xv + yv);
+	  }
+	}
+	#endregion
+
+	if (ziele.Count > 0) {
+	  MinimaxTreeNode[] children = new MinimaxTreeNode[ziele.Count];
+#region Simuliere nächste Züge und sammle die Knoten in children
+	  int i = 0;
+
+	  foreach (Vektor v in ziele) {
+	    // Zug ausführen und dann weiterrechnen
+	    int old = feld[v.X, v.Y];
+	    feld[v.X, v.Y] = amZug;
+	    try {
+	      children[i++] = Minimax(feld, v, spieler, AndererSpieler(amZug), false);
+	    }
+	    finally {
+	      // feld zurücksetzen
+	      feld[v.X, v.Y] = old;
+	    }
+	  }
+#endregion
+
+	  int ergebnis = -2;
+#region Finde das beste zu erreichende Ergebnis
+	  foreach (MinimaxTreeNode n in children) {
+	    if (n.Ergebnis == 1) {
+	      ergebnis = 1;
+	      break;
+	    }
+	    else if (n.Ergebnis > ergebnis) {
+	      ergebnis = n.Ergebnis;
+	    }
+	  }
+#endregion
+	
+	  return new MinimaxTreeNode(ziel, ergebnis, children);
+	} // if (ziele.Count > 0)
+	else {
+	  if (letzterÜbersprungen) {
+	    // Spiel vorbei, auszählen und schauen, ob gewonnen oder verloren
+	    // und dann mach ein Blatt drauß
+	    int[] stat = Statistik(feld);
+	    if (stat[spieler] > stat[AndererSpieler(spieler)])
+	      return new MinimaxTreeNode(new Vektor(-1, -1), 1, null);
+	    else if (stat[spieler] < stat[AndererSpieler(spieler)])
+	      return new MinimaxTreeNode(new Vektor(-1, -1), -1, null);
+	    else
+	      return new MinimaxTreeNode(new Vektor(-1, -1), 0, null); // Patt
+	  }
+	  else {
+	    // überspringen
+	    return Minimax(feld, new Vektor(-1, -1), spieler, AndererSpieler(amZug), true);
+	  }
+	}
+      }
     }
 }
