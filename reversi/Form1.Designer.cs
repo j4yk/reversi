@@ -42,6 +42,8 @@
             this.neuesSpielToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.beendenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bewertungenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tiefeTB = new System.Windows.Forms.ToolStripTextBox();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
@@ -57,11 +59,11 @@
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.boardPanel);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.infoPanel);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(203, 242);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(290, 241);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
-            this.toolStripContainer1.Size = new System.Drawing.Size(203, 266);
+            this.toolStripContainer1.Size = new System.Drawing.Size(290, 266);
             this.toolStripContainer1.TabIndex = 0;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -75,7 +77,7 @@
             this.boardPanel.Location = new System.Drawing.Point(0, 34);
             this.boardPanel.MinimumSize = new System.Drawing.Size(65, 65);
             this.boardPanel.Name = "boardPanel";
-            this.boardPanel.Size = new System.Drawing.Size(203, 208);
+            this.boardPanel.Size = new System.Drawing.Size(290, 207);
             this.boardPanel.TabIndex = 1;
             this.boardPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.boardPanel_Paint);
             this.boardPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.boardPanel_MouseMove);
@@ -90,7 +92,7 @@
             this.infoPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.infoPanel.Location = new System.Drawing.Point(0, 0);
             this.infoPanel.Name = "infoPanel";
-            this.infoPanel.Size = new System.Drawing.Size(203, 34);
+            this.infoPanel.Size = new System.Drawing.Size(290, 34);
             this.infoPanel.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -151,10 +153,12 @@
             // 
             this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.dateiToolStripMenuItem});
+            this.dateiToolStripMenuItem,
+            this.bewertungenToolStripMenuItem,
+            this.tiefeTB});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(203, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(290, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -165,21 +169,21 @@
             this.toolStripMenuItem1,
             this.beendenToolStripMenuItem});
             this.dateiToolStripMenuItem.Name = "dateiToolStripMenuItem";
-            this.dateiToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.dateiToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
             this.dateiToolStripMenuItem.Text = "Datei";
             // 
             // neuesSpielToolStripMenuItem
             // 
             this.neuesSpielToolStripMenuItem.Name = "neuesSpielToolStripMenuItem";
             this.neuesSpielToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
-            this.neuesSpielToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.neuesSpielToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.neuesSpielToolStripMenuItem.Text = "Neues Spiel";
             this.neuesSpielToolStripMenuItem.Click += new System.EventHandler(this.neuesSpielToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(137, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(167, 6);
             // 
             // beendenToolStripMenuItem
             // 
@@ -189,12 +193,25 @@
             this.beendenToolStripMenuItem.Text = "Beenden";
             this.beendenToolStripMenuItem.Click += new System.EventHandler(this.beendenToolStripMenuItem_Click);
             // 
+            // bewertungenToolStripMenuItem
+            // 
+            this.bewertungenToolStripMenuItem.Name = "bewertungenToolStripMenuItem";
+            this.bewertungenToolStripMenuItem.Size = new System.Drawing.Size(137, 21);
+            this.bewertungenToolStripMenuItem.Text = "Bewertungen berechnen";
+            this.bewertungenToolStripMenuItem.Click += new System.EventHandler(this.bewertungenToolStripMenuItem_Click);
+            // 
+            // tiefeTB
+            // 
+            this.tiefeTB.Name = "tiefeTB";
+            this.tiefeTB.Size = new System.Drawing.Size(100, 21);
+            this.tiefeTB.Text = "3";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(203, 266);
+            this.ClientSize = new System.Drawing.Size(290, 266);
             this.Controls.Add(this.toolStripContainer1);
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -235,6 +252,8 @@
         private System.Windows.Forms.Label score1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label score2;
+        private System.Windows.Forms.ToolStripMenuItem bewertungenToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox tiefeTB;
     }
 }
 

@@ -31,6 +31,7 @@ namespace reversi
         private void boardPanel_Paint(object sender, PaintEventArgs e)
         {
             // Spielsteine
+            List<Vektor> z = ReversiLogik.MöglicheZüge(game.Feld, game.AktuellerSpieler);
             for (int y = 0; y < 6; y++)
             {
                 for (int x = 0; x < 6; x++)
@@ -39,6 +40,16 @@ namespace reversi
                         boardPanel.ClientRectangle.Left + x * fieldw,
                         boardPanel.ClientRectangle.Top + y * fieldh,
                         fieldw, fieldh);
+                    if (z.Contains(new Vektor(x ,y)))
+                        e.Graphics.DrawEllipse(Pens.White,
+                            boardPanel.ClientRectangle.Left + x * fieldw,
+                            boardPanel.ClientRectangle.Top + y * fieldh,
+                            fieldw, fieldh);
+                    // evtl. Bewertung
+                    Vektor v = new Vektor(x, y);
+                    if (game.Bewertungen.ContainsKey(v))
+                        e.Graphics.DrawString(game.Bewertungen[v].ToString(), DefaultFont, Brushes.White, 
+                            fieldw * x + 2.0f, fieldh * y + 2.0f);
                 }
             }
             // Linien
@@ -174,6 +185,16 @@ namespace reversi
         private void neuesSpielToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NeuesSpiel();
+        }
+
+        private void bewertungenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int t;
+            if (int.TryParse(tiefeTB.Text, out t))
+                game.BerechneBewertungen(t);
+            else
+                tiefeTB.Focus();
+            boardPanel.Refresh();
         }
     }
 }
